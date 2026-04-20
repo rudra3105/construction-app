@@ -8,7 +8,8 @@ const nextConfig = withPWA({
   skipWaiting: true,
   disable: !isProd
 })({
-  reactStrictMode: true
+  reactStrictMode: true,
+  turbopack: {}
 });
 
 export default nextConfig;

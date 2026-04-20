@@ -12,8 +12,9 @@ export async function verifyPassword(password: string, hash: string) {
   return bcrypt.compare(password, hash);
 }
 
-export function setLoginCookie(userId: string, role: string) {
-  cookies().set({
+export async function setLoginCookie(userId: string, role: string) {
+  const cookieStore = await cookies();
+  cookieStore.set({
     name: COOKIE_NAME,
     value: `${userId}|${role}`,
     path: '/',
@@ -23,8 +24,9 @@ export function setLoginCookie(userId: string, role: string) {
   });
 }
 
-export function clearLoginCookie() {
-  cookies().set({
+export async function clearLoginCookie() {
+  const cookieStore = await cookies();
+  cookieStore.set({
     name: COOKIE_NAME,
     value: '',
     path: '/',
@@ -32,22 +34,23 @@ export function clearLoginCookie() {
   });
 }
 
-export function getCurrentUser() {
-  const cookie = cookies().get(COOKIE_NAME)?.value;
+export async function getCurrentUser() {
+  const cookieStore = await cookies();
+  const cookie = cookieStore.get(COOKIE_NAME)?.value;
   if (!cookie) return null;
   const [id, role] = cookie.split('|');
   if (!id || !role) return null;
   return { id, role };
 }
 
-export function requireUser() {
-  const user = getCurrentUser();
+export async function requireUser() {
+  const user = await getCurrentUser();
   if (!user) redirect('/login');
   return user;
 }
 
-export function requireAdmin() {
-  const user = getCurrentUser();
+export async function requireAdmin() {
+  const user = await getCurrentUser();
   if (!user || user.role !== 'ADMIN') redirect('/dashboard');
   return user;
 }

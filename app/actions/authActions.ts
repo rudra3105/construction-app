@@ -16,7 +16,7 @@ export async function loginAction(formData: FormData) {
   const valid = await verifyPassword(password, user.password);
   if (!valid) return;
 
-  setLoginCookie(user.id, user.role);
+  await setLoginCookie(user.id, user.role);
   redirect('/dashboard');
 }
 
@@ -33,12 +33,12 @@ export async function registerAction(formData: FormData) {
 
   const hashedPassword = await hashPassword(password);
   const user = await prisma.user.create({ data: { name, email, password: hashedPassword, role } });
-  setLoginCookie(user.id, user.role);
+  await setLoginCookie(user.id, user.role);
   redirect('/dashboard');
 }
 
 export async function logoutAction() {
   const { clearLoginCookie } = await import('../../lib/auth');
-  clearLoginCookie();
+  await clearLoginCookie();
   redirect('/login');
 }

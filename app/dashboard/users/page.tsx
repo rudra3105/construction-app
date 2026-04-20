@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { requireAdmin } from '../../../lib/auth';
 
 export default async function UsersPage() {
-  requireAdmin();
+  await requireAdmin();
   const users = await prisma.user.findMany({ orderBy: { createdAt: 'desc' } });
 
   return (

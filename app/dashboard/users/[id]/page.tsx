@@ -8,7 +8,7 @@ interface PageProps {
 }
 
 export default async function UserEditPage({ params }: PageProps) {
-  requireAdmin();
+  await requireAdmin();
   const user = await prisma.user.findUnique({ where: { id: params.id } });
   if (!user) return redirect('/dashboard/users');
 

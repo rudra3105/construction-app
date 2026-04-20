@@ -5,7 +5,7 @@ export const metadata: Metadata = {
   title: 'Accounting - SiteSutra'
 };
 
-export default function AccountingLayout({ children }: { children: React.ReactNode }) {
-  requireAdmin();
+export default async function AccountingLayout({ children }: { children: React.ReactNode }) {
+  await requireAdmin();
   return <>{children}</>;
 }

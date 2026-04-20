@@ -22,8 +22,8 @@ const accountingMenu = [
   { label: 'Accounting Reports', href: '/dashboard/accounting/reports' }
 ];
 
-export default function Sidebar() {
-  const user = getCurrentUser();
+export default async function Sidebar() {
+  const user = await getCurrentUser();
   const isAdmin = user?.role === 'ADMIN';
 
   return (
