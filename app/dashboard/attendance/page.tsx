@@ -1,6 +1,7 @@
 import { prisma } from '../../../lib/prisma';
 import { createAttendance, deleteAttendance } from '../../actions/resourceActions';
 import { formatDate } from '../../../lib/utils';
+export const dynamic = 'force-dynamic';
 
 export default async function AttendancePage() {
   const sites = await prisma.site.findMany();

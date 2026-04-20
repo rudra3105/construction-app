@@ -9,6 +9,7 @@ const nextConfig = withPWA({
   disable: !isProd
 })({
   reactStrictMode: true,
+  serverExternalPackages: ['@prisma/client', 'bcryptjs'],
   turbopack: {}
 });
 
