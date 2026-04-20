@@ -1,0 +1,206 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  name      String
+  email     String   @unique
+  password  String
+  role      Role     @default(SUPERVISOR)
+  sites     Site[]   @relation("SupervisorSites")
+  incomes   Income[]
+  expenses  Expense[]
+  lpos      LPO[]
+  createdAt DateTime @default(now())
+}
+
+enum Role {
+  ADMIN
+  SUPERVISOR
+}
+
+model Site {
+  id            String     @id @default(cuid())
+  name          String
+  location      String
+  startDate     DateTime
+  status        SiteStatus @default(PLANNED)
+  supervisor    User?      @relation("SupervisorSites", fields: [supervisorId], references: [id])
+  supervisorId  String?
+  workLogs      WorkLog[]
+  materialLogs  MaterialLog[]
+  labours       Labour[]
+  attendances   Attendance[]
+  incomes       Income[]
+  expenses      Expense[]
+  lpos          LPO[]
+  createdAt     DateTime   @default(now())
+}
+
+enum SiteStatus {
+  PLANNED
+  ONGOING
+  COMPLETED
+}
+
+model WorkLog {
+  id          String      @id @default(cuid())
+  site        Site        @relation(fields: [siteId], references: [id])
+  siteId      String
+  date        DateTime
+  workType    String
+  unit        String
+  quantity    Float
+  description String
+  progress    Int
+  image       String?
+  createdAt   DateTime     @default(now())
+}
+
+model Material {
+  id        String         @id @default(cuid())
+  name      String
+  unit      String
+  logs      MaterialLog[]
+  rules     IdealRule[]
+  createdAt DateTime       @default(now())
+}
+
+model MaterialLog {
+  id               String   @id @default(cuid())
+  site             Site     @relation(fields: [siteId], references: [id])
+  siteId           String
+  material         Material @relation(fields: [materialId], references: [id])
+  materialId       String
+  date             DateTime
+  purchasedQuantity Float   @default(0)
+  usedQuantity     Float   @default(0)
+  notes            String?
+  createdAt        DateTime @default(now())
+}
+
+model IdealRule {
+  id            String   @id @default(cuid())
+  workType      String
+  unit          String
+  material      Material @relation(fields: [materialId], references: [id])
+  materialId    String
+  unitQuantity  Float
+  idealQuantity Float
+  createdAt     DateTime @default(now())
+}
+
+model Labour {
+  id        String   @id @default(cuid())
+  name      String
+  role      String
+  dailyWage Float
+  site      Site?    @relation(fields: [siteId], references: [id])
+  siteId    String?
+  attendances Attendance[]
+  payrolls  Payroll[]
+  createdAt DateTime @default(now())
+}
+
+model Attendance {
+  id        String   @id @default(cuid())
+  labour    Labour   @relation(fields: [labourId], references: [id])
+  labourId  String
+  site      Site     @relation(fields: [siteId], references: [id])
+  siteId    String
+  date      DateTime
+  present   Boolean  @default(true)
+  createdAt DateTime @default(now())
+}
+
+model Payroll {
+  id        String   @id @default(cuid())
+  labour    Labour   @relation(fields: [labourId], references: [id])
+  labourId  String
+  amount    Float
+  date      DateTime
+  notes     String?
+  createdAt DateTime @default(now())
+}
+
+enum PaymentMethod {
+  CASH
+  UPI
+  BANK_TRANSFER
+  NEFT
+  RTGS
+}
+
+enum ExpenseCategory {
+  MATERIAL
+  LABOUR
+  TRANSPORT
+  MISC
+}
+
+enum LPOStatus {
+  PENDING
+  APPROVED
+  COMPLETED
+}
+
+model Income {
+  id            String        @id @default(cuid())
+  amount        Float
+  date          DateTime
+  source        String
+  paymentMethod PaymentMethod
+  reference     String?
+  notes         String?
+  site          Site?         @relation(fields: [siteId], references: [id])
+  siteId        String?
+  user          User?         @relation(fields: [userId], references: [id])
+  userId        String?
+  createdAt     DateTime      @default(now())
+}
+
+model Expense {
+  id            String          @id @default(cuid())
+  amount        Float
+  date          DateTime
+  category      ExpenseCategory
+  paymentMethod PaymentMethod
+  notes         String?
+  site          Site?           @relation(fields: [siteId], references: [id])
+  siteId        String?
+  user          User?           @relation(fields: [userId], references: [id])
+  userId        String?
+  createdAt     DateTime        @default(now())
+}
+
+model LPO {
+  id         String     @id @default(cuid())
+  number     String     @unique
+  vendorName String
+  site       Site?      @relation(fields: [siteId], references: [id])
+  siteId     String?
+  status     LPOStatus  @default(PENDING)
+  date       DateTime
+  notes      String?
+  items      LPOItem[]
+  user       User?      @relation(fields: [userId], references: [id])
+  userId     String?
+  createdAt  DateTime   @default(now())
+}
+
+model LPOItem {
+  id           String   @id @default(cuid())
+  lpo          LPO      @relation(fields: [lpoId], references: [id])
+  lpoId        String
+  materialName String
+  quantity     Float
+  rate         Float
+  total        Float
+  createdAt    DateTime @default(now())
+}
