@@ -1,3 +1,5 @@
+'use server';
+
 import { ExpenseCategory, LPOStatus, PaymentMethod } from '@prisma/client';
 import { prisma } from '../../lib/prisma';
 import { redirect } from 'next/navigation';

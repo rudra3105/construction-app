@@ -1,3 +1,5 @@
+'use server';
+
 import { prisma } from '../../lib/prisma';
 import { formatDate } from '../../lib/utils';
 import type { SiteStatus } from '@prisma/client';

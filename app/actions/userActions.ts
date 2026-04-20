@@ -1,3 +1,5 @@
+'use server';
+
 import { prisma } from '../../lib/prisma';
 import { hashPassword } from '../../lib/auth';
 import { redirect } from 'next/navigation';

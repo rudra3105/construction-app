@@ -1,9 +1,10 @@
+'use server';
+
 import { prisma } from '../../lib/prisma';
 import { hashPassword, verifyPassword, setLoginCookie } from '../../lib/auth';
 import { redirect } from 'next/navigation';
 
 export async function loginAction(formData: FormData) {
-  'use server';
   const email = formData.get('email')?.toString().trim();
   const password = formData.get('password')?.toString() || '';
 
@@ -20,7 +21,6 @@ export async function loginAction(formData: FormData) {
 }
 
 export async function registerAction(formData: FormData) {
-  'use server';
   const name = formData.get('name')?.toString().trim();
   const email = formData.get('email')?.toString().trim();
   const password = formData.get('password')?.toString() || '';
@@ -38,7 +38,6 @@ export async function registerAction(formData: FormData) {
 }
 
 export async function logoutAction() {
-  'use server';
   const { clearLoginCookie } = await import('../../lib/auth');
   clearLoginCookie();
   redirect('/login');
